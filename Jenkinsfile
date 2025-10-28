@@ -72,16 +72,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Upload Additional Files via SCP (Password)') {
-            steps {
-                withCredentials([string(credentialsId: 'vm1-ssh-pass', variable: 'SSH_PASS')]) {
-                    sh """
-                    sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/
-                    """
-                }
-            }
-        }
     }
 
     post {
