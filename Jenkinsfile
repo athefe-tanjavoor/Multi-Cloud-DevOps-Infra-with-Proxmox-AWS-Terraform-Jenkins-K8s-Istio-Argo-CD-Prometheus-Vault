@@ -36,9 +36,9 @@ pipeline {
             }
         }
 
-        stage('Deploy on VM1 via SSH') {
+        stage('Deploy on VM via SSH') {
             steps {
-                sshagent (credentials: ['vm1-ssh-creds']) {
+                sshagent(['vm1-ssh-creds']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no jenkins@$REMOTE_VM '
                         echo "Pulling latest Docker image..."
@@ -68,6 +68,16 @@ pipeline {
                             exit 1
                         fi
                     '
+                    """
+                }
+            }
+        }
+
+        stage('Upload Additional Files via SCP') {
+            steps {
+                sshagent(['vm1-ssh-creds']) {
+                    sh """
+                    scp -o StrictHostKeyChecking=no -r ./local_files/* jenkins@$REMOTE_VM:$HOST_UPLOAD_PATH/
                     """
                 }
             }
