@@ -36,11 +36,12 @@ pipeline {
             }
         }
 
-        stage('Deploy on VM via SSH') {
+        stage('Deploy on VM via SSH (Password)') {
             steps {
-                sshagent(['vm1-ssh-creds']) {
+                // Use Jenkins credential ID for SSH password
+                withCredentials([string(credentialsId: 'vm1-ssh-pass', variable: 'SSH_PASS')]) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no jenkins@$REMOTE_VM '
+                    sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no rankraze@$REMOTE_VM '
                         echo "Pulling latest Docker image..."
                         docker pull $DOCKER_IMAGE
 
@@ -73,11 +74,11 @@ pipeline {
             }
         }
 
-        stage('Upload Additional Files via SCP') {
+        stage('Upload Additional Files via SCP (Password)') {
             steps {
-                sshagent(['vm1-ssh-creds']) {
+                withCredentials([string(credentialsId: 'vm1-ssh-pass', variable: 'SSH_PASS')]) {
                     sh """
-                    scp -o StrictHostKeyChecking=no -r ./local_files/* jenkins@$REMOTE_VM:$HOST_UPLOAD_PATH/
+                    sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/
                     """
                 }
             }
