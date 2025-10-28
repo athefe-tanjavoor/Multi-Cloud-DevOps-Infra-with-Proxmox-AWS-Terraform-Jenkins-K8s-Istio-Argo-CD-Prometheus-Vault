@@ -38,47 +38,47 @@ pipeline {
 
         stage('Deploy on VM via SSH (Key)') {
             steps {
-                sshagent(['vm1-ssh-creds']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no rankraze@$REMOTE_VM '
-                            echo "Pulling latest Docker image..."
-                            docker pull $DOCKER_IMAGE
+                sshagent(['vm1-ssh-creds-rankraze-vm']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no rankraze@$REMOTE_VM '
+                        echo "Pulling latest Docker image..."
+                        docker pull $DOCKER_IMAGE
 
-                            echo "Stopping old container if exists..."
-                            docker stop $CONTAINER_NAME || true
-                            docker rm $CONTAINER_NAME || true
+                        echo "Stopping old container if exists..."
+                        docker stop $CONTAINER_NAME || true
+                        docker rm $CONTAINER_NAME || true
 
-                            echo "Ensuring uploads folder exists on host..."
-                            mkdir -p $HOST_UPLOAD_PATH
+                        echo "Ensuring uploads folder exists on host..."
+                        mkdir -p $HOST_UPLOAD_PATH
 
-                            echo "Running new container..."
-                            docker run -d \
-                                --name $CONTAINER_NAME \
-                                --restart always \
-                                -p $APP_PORT:$APP_PORT \
-                                -v $HOST_UPLOAD_PATH:$CONTAINER_UPLOAD_PATH \
-                                --user 1000:1000 \
-                                $DOCKER_IMAGE
+                        echo "Running new container..."
+                        docker run -d \
+                            --name $CONTAINER_NAME \
+                            --restart always \
+                            -p $APP_PORT:$APP_PORT \
+                            -v $HOST_UPLOAD_PATH:$CONTAINER_UPLOAD_PATH \
+                            --user 1000:1000 \
+                            $DOCKER_IMAGE
 
-                            echo "Verifying uploads folder..."
-                            if [ -d "$HOST_UPLOAD_PATH" ]; then
-                                echo "✅ Uploads folder exists on host."
-                            else
-                                echo "❌ Uploads folder does NOT exist!"
-                                exit 1
-                            fi
-                        '
-                    '''
+                        echo "Verifying uploads folder..."
+                        if [ -d "$HOST_UPLOAD_PATH" ]; then
+                            echo "✅ Uploads folder exists on host."
+                        else
+                            echo "❌ Uploads folder does NOT exist!"
+                            exit 1
+                        fi
+                    '
+                    """
                 }
             }
         }
 
         stage('Upload Additional Files via SCP (Key)') {
             steps {
-                sshagent(['vm1-ssh-creds']) {
-                    sh '''
-                        scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/
-                    '''
+                sshagent(['vm1-ssh-creds-rankraze-vm']) {
+                    sh """
+                    scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/
+                    """
                 }
             }
         }
