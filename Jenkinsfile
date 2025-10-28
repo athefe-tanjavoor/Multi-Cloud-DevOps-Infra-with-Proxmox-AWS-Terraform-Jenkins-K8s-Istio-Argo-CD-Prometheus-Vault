@@ -14,14 +14,8 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'github-creds-multi-cloud',
+                    credentialsId: 'github-creds-multi-cloud', // GitHub credentials stored in Jenkins
                     url: 'https://github.com/athefe-tanjavoor/Multi-Cloud-DevOps-Infra-with-Proxmox-AWS-Terraform-Jenkins-K8s-Istio-Argo-CD-Prometheus-Vault.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install --production'
             }
         }
 
@@ -33,6 +27,7 @@ pipeline {
 
         stage('Push Docker Image to Docker Hub') {
             steps {
+                // Use Docker Hub credentials stored in Jenkins
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
@@ -44,6 +39,7 @@ pipeline {
 
         stage('Deploy on VM1 via SSH') {
             steps {
+                // Use SSH credentials stored in Jenkins
                 sshagent (credentials: ['vm1-ssh-creds']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no jenkins@$REMOTE_VM '
