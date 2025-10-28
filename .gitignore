@@ -1,0 +1,87 @@
+# =========================
+# Node.js
+# =========================
+node_modules/
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Temporary files
+tmp/
+.cache/
+coverage/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Editors / IDEs
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Docker
+# =========================
+# Ignore Docker build files and temporary data
+**/Dockerfile~
+**/docker-compose.yml~
+.docker/
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+.dockerignore
+
+# Docker volumes & intermediate containers
+**/volumes/
+**/data/
+**/tmp/
+**/.docker-cache/
+**/.docker-build/
+
+# =========================
+# Jenkins
+# =========================
+# Jenkins build directories and cache
+**/jenkins_home/
+**/jenkins_build/
+**/workspace/
+**/target/
+
+# Jenkins pipeline logs
+*.jenkinsfile.log
+*.jenkins.log
+
+# Jenkins secrets or credentials
+**/secrets/
+**/credentials.xml
+**/identity.key.enc
+**/secret.key
+**/secret.key.not-so-secret
+**/userContent/
+
+# =========================
+# Lock files (optional)
+# =========================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

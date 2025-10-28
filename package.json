@@ -1,0 +1,21 @@
+{
+  "name": "media-server",
+  "version": "1.0.0",
+  "description": "Simple media server using Express",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
