@@ -72,6 +72,17 @@ pipeline {
                 }
             }
         }
+
+        stage('Upload Additional Files to VM') {
+            steps {
+                withCredentials([string(credentialsId: 'vm1-ssh-pass', variable: 'SSH_PASS')]) {
+                    sh """
+                    echo "📦 Uploading additional files to VM..."
+                    sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/ || echo 'No local files to upload'
+                    """
+                }
+            }
+        }
     }
 
     post {
