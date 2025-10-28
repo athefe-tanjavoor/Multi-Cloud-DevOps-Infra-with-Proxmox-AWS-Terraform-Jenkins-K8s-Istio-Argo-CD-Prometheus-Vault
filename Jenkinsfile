@@ -28,17 +28,17 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
+                    sh """
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                         docker push $DOCKER_IMAGE
-                    '''
+                    """
                 }
             }
         }
 
         stage('Deploy on VM via SSH (Key)') {
             steps {
-                sshagent(['vm1-ssh-key']) {
+                sshagent(['vm1-ssh-creds']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no rankraze@$REMOTE_VM '
                             echo "Pulling latest Docker image..."
@@ -75,7 +75,7 @@ pipeline {
 
         stage('Upload Additional Files via SCP (Key)') {
             steps {
-                sshagent(['vm1-ssh-key']) {
+                sshagent(['vm1-ssh-creds']) {
                     sh '''
                         scp -o StrictHostKeyChecking=no -r ./local_files/* rankraze@$REMOTE_VM:$HOST_UPLOAD_PATH/
                     '''
